@@ -80,6 +80,8 @@ def detect(img):
               # first 4 coeffcient is the location of the bounding box and the 5th element is the box confidence
           if det_data:
             detections.append(tuple(det_data)) 
+          #else:
+          #  detections.append(np.empty((0,5)))
       # (obj, score, [cx,cy,w,h])
   return detections
     
@@ -118,27 +120,32 @@ def detect_and_track(video_filename: str) -> Dict[str, List]:
     # 3. Get the detections from the object detector
     detections = detect(img)
 
-    if detections:
-      # 4. Transform the detected points on floor plane from camera image plane
-      detections_on_floor_plane = []
-      for (obj, score, [cx,cy,w,h]) in detections:
-          #convert coordinates cx,cy,w,h to x1,y1,x2,y2. Project them onto floor plane and
-          # reorder the results to (bbox, score, object_name)
-          x1, y1, x2, y2 = get_corner_coordinates([cx, cy, w, h])
-          detection = [x1, y1, x2, y2, score] 
+    # 4. Transform the detected points on floor plane from camera image plane
+    detections_on_floor_plane = []
+    dets = np.array([]) 
+    for (obj, score, [cx,cy,w,h]) in detections:
+        #convert coordinates cx,cy,w,h to x1,y1,x2,y2. Project them onto floor plane and
+        # reorder the results to (bbox, score, object_name)
+        x1, y1, x2, y2 = get_corner_coordinates([cx, cy, w, h])
+        detection = np.array([x1, y1, x2, y2, score])   
+        np.concatenate((dets,detection)) 
 
-          # 5. Find association of the detected objects and add the objects into list of tracks Using SORT.
-          if detection is not None:
-              # 6. Update the tracks
-              tracked_persons = person_tracker.update(detection)
-              for x1, y1, x2, y2, personid in tracked_persons:
-                  # 7. For each tracked object, get the center pixel on the image plane and add it to the object trajectory.
-                  center_pos = (int((x1 + x2)/2), int(y1 + y2)/2)
-                  tracks[personid] = tracks.get(personid, []) + [center_pos]  
-    
+    try:
+      # 5. Find association of the detected objects and add the objects into list of tracks Using SORT.
+      if detections is not None:
+          # 6. Update the tracks
+          tracked_persons = person_tracker.update(dets)
+
+          for x1, y1, x2, y2, personid in tracked_persons:
+              # 7. For each tracked object, get the center pixel on the image plane and add it to the object trajectory.
+              center_pos = (int((x1 + x2)/2), int(y1 + y2)/2)
+              print(center_pos) 
+              tracks[personid] = tracks.get(personid, []) + [center_pos]  
+    except Exception as e:
+      print(e)
 
 if __name__ == '__main__':
-  video_path= 'Videos/cam3_004.mp4'
+  video_path= 'Videos/cam3_004s.mp4'
   print(detect_and_track(video_path))
   
   
