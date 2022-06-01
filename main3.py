@@ -122,30 +122,30 @@ def detect_and_track(video_filename: str) -> Dict[str, List]:
 
     # 4. Transform the detected points on floor plane from camera image plane
     detections_on_floor_plane = []
-    dets = np.array([]) 
+    dets = np.empty((0,5))  
     for (obj, score, [cx,cy,w,h]) in detections:
-        #convert coordinates cx,cy,w,h to x1,y1,x2,y2. Project them onto floor plane and
-        # reorder the results to (bbox, score, object_name)
-        x1, y1, x2, y2 = get_corner_coordinates([cx, cy, w, h])
-        detection = np.array([x1, y1, x2, y2, score])   
-        np.concatenate((dets,detection)) 
+      #convert coordinates cx,cy,w,h to x1,y1,x2,y2. Project them onto floor plane and
+      # reorder the results to (bbox, score, object_name)
+      x1, y1, x2, y2 = get_corner_coordinates([cx, cy, w, h])
+      detection = np.array([x1, y1, x2, y2, score])   
+      dets = np.vstack((dets,detection)) 
 
-    try:
-      # 5. Find association of the detected objects and add the objects into list of tracks Using SORT.
-      if detections is not None:
+      try:
+        # 5. Find association of the detected objects and add the objects into list of tracks Using SORT.
+        if detections is not None:
           # 6. Update the tracks
           tracked_persons = person_tracker.update(dets)
 
           for x1, y1, x2, y2, personid in tracked_persons:
-              # 7. For each tracked object, get the center pixel on the image plane and add it to the object trajectory.
-              center_pos = (int((x1 + x2)/2), int(y1 + y2)/2)
-              print(center_pos) 
-              tracks[personid] = tracks.get(personid, []) + [center_pos]  
-    except Exception as e:
-      print(e)
+            # 7. For each tracked object, get the center pixel on the image plane and add it to the object trajectory.
+            center_pos = (int((x1 + x2)/2), int(y1 + y2)/2)
+            tracks[personid] = tracks.get(personid, []) + [center_pos] 
+            print(tracks) 
+      except Exception as e:
+        print(e)
 
 if __name__ == '__main__':
-  video_path= 'Videos/cam3_004s.mp4'
+  video_path= 'Videos/cam3_004.mp4'
   print(detect_and_track(video_path))
   
   
