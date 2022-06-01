@@ -35,7 +35,7 @@ def get_inverse_pespective(perspective_matrix: np.array)-> np.array:
   #Obtain respective homogenous points on the image plane
   pts_src = (perspective_matrix @ pts_dst.T).T
   
-  #convert homogenous coordinates to cartesian coorndinates
+  #convert homogenous coordinates to cartesian coordinates
   pts_src_cart = np.array([[x/w, y/w] for x,y,w in pts_src])
   pts_dst_cart = np.array([[x/w, y/w] for x,y,z,w in pts_dst])
   
@@ -48,7 +48,7 @@ def project_to_floor(image_coordinates: List[int], h: np.array) -> List[int]:
   """
   This method takes the Homography matrix and the 2d image cartesian coordinates. It returns the (x, y)
   cartesian coordinates in 3d cartesian world coordinates on floor plane(at z=0). Notice that z coordinate is omitted
-  here and added inside the tracking funtion. 
+  here and added inside the tracking function. 
   
   Parameters
   ----------
