@@ -83,7 +83,7 @@ def get_corner_coordinates(bbox: List[int]) -> List[int]:
   return [int(cx - w/2), int(cy - h/2), int(cx + w/2), int(cy + h/2)]
 
 
-def plot_detections(img: Image, detections: List) -> None:
+def plot_detections(img: Image, img_path, detections: List) -> None:
   '''
   Plot the detections onto the video frame and save it.
   Parameters
@@ -118,7 +118,8 @@ def plot_detections(img: Image, detections: List) -> None:
                 bbox={'color': color, 'pad': 0})
   plt.axis('off')
   # save image
-  img_path = img.filename
+  #img_path = img.filename
+  img_path = img_path 
   plt.savefig(img_path.replace(".jpg", "-det.jpg"),        
                   bbox_inches='tight', pad_inches=0.0)
   plt.show()
