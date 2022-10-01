@@ -34,8 +34,8 @@ Tracking
 * The image plane tracks are then projected to the floor plane in the following way
 
 Transformation
-* Calculated a Homography matrix by mapping points on the target floor plane to points in the image. 
-* We used this information to calculate the inverse perspective projection from image to ground plane. 
+* Calculated a Homography matrix by mapping points on the target floor plane to points in the image
+* Used this information to calculate the inverse perspective projection from image to ground plane
 * The Homography, together with an image Cartesian x and y coordinates are used to calculate the real-world floor coordinates
 
 **Training Parametrs for Simulated Video**
